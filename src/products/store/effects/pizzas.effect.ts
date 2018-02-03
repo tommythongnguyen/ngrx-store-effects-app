@@ -7,6 +7,8 @@ import { Effect, Actions } from "@ngrx/effects";
 
 import * as fromServices from "../../services";
 
+import * as fromRoot from "../../../app/store";
+
 import { Pizza } from "../../models/pizza.model";
 
 @Injectable()
@@ -42,6 +44,19 @@ export class PizzasEffects {
   );
 
   @Effect()
+  createPizzaSuccess$ = this.actions$
+    .ofType(pizzasAction.CREATE_PIZZA_SUCCESS)
+    .pipe(
+      map((action: pizzasAction.CreatePizzaSuccess) => action.payload),
+      map(
+        pizza =>
+          new fromRoot.Go({
+            path: ["/products", pizza.id]
+          })
+      )
+    );
+
+  @Effect()
   updatePizza$ = this.actions$.ofType(pizzasAction.UPDATE_PIZZA).pipe(
     map((action: pizzasAction.CreatePizza) => action.payload),
     switchMap((pizza: Pizza) => {
@@ -66,4 +81,19 @@ export class PizzasEffects {
         );
     })
   );
+
+  @Effect()
+  handlePizzaSuccess$ = this.actions$
+    .ofType(
+      pizzasAction.UPDATE_PIZZA_SUCCESS,
+      pizzasAction.REMOVE_PIZZA_SUCCESS
+    )
+    .pipe(
+      map(
+        pizza =>
+          new fromRoot.Go({
+            path: ["/products"]
+          })
+      )
+    );
 }
