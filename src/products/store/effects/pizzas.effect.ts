@@ -1,28 +1,29 @@
-import { Pizza } from "./../../models/pizza.model";
-import { Injectable } from "@angular/core";
-import { Actions, Effect } from "@ngrx/effects";
-
-import * as pizzasAction from "../actions/pizzas.action";
-import * as productsServices from "../../services";
-
 import { switchMap, map, catchError } from "rxjs/operators";
-import { of } from "rxjs/observable/of";
+import * as pizzasAction from "./../actions/pizzas.action";
+import { of } from "rxjs/Observable/of";
+import { Injectable } from "@angular/core";
+
+import { Effect, Actions } from "@ngrx/effects";
+
+import * as fromServices from "../../services";
+
+import { Pizza } from "../../models/pizza.model";
 
 @Injectable()
-export class PizzasEffect {
+export class PizzasEffects {
   constructor(
     private actions$: Actions,
-    private pizzasService: productsServices.PizzasService
+    private pizzaService: fromServices.PizzasService
   ) {}
 
   @Effect()
-  loadPizzas$ = this.actions$.ofType(pizzasAction.PIZZAS_LOAD).pipe(
+  loadPizzas$ = this.actions$.ofType(pizzasAction.LOAD_PIZZAS).pipe(
     switchMap(() => {
-      return this.pizzasService
+      return this.pizzaService
         .getPizzas()
         .pipe(
-          map((pizzas: Pizza[]) => new pizzasAction.PizzasLoadSuccess(pizzas)),
-          catchError((error: any) => of(new pizzasAction.PizzasLoadFail(error)))
+          map((pizzas: Pizza[]) => new pizzasAction.LoadPizzaSuccess(pizzas)),
+          catchError(error => of(new pizzasAction.LoadPizzaFail(error)))
         );
     })
   );

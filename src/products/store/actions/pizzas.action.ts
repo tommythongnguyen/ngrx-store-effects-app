@@ -1,24 +1,22 @@
 import { Action } from "@ngrx/store";
-
 import { Pizza } from "../../models/pizza.model";
-// create action Type
-export const PIZZAS_LOAD = "[Products] Pizza Load";
-export const PIZZAS_LOAD_SUCCESS = "[Products] Pizza Load Success";
-export const PIZZAS_LOAD_FAIL = "[Products] Pizza Load Fail";
 
-// create Action
-export class PizzasLoad implements Action {
-  readonly type = PIZZAS_LOAD;
+export const LOAD_PIZZAS = "[Products] Load Pizzas";
+export const LOAD_PIZZAS_SUCCESS = "[Products] Load Pizzas Success";
+export const LOAD_PIZZAS_FAIL = "[Products] Load Pizzas Fail";
+
+export class LoadPizzas implements Action {
+  readonly type = LOAD_PIZZAS;
 }
 
-export class PizzasLoadSuccess implements Action {
-  readonly type = PIZZAS_LOAD_SUCCESS;
+export class LoadPizzaSuccess implements Action {
+  readonly type = LOAD_PIZZAS_SUCCESS;
   constructor(public payload: Pizza[]) {}
 }
 
-export class PizzasLoadFail implements Action {
-  readonly type = PIZZAS_LOAD_FAIL;
+export class LoadPizzaFail implements Action {
+  readonly type = LOAD_PIZZAS_FAIL;
   constructor(public payload: any) {}
 }
-// export actions for pizza
-export type PizzasAction = PizzasLoad | PizzasLoadSuccess | PizzasLoadFail;
+
+export type pizzasAction = LoadPizzas | LoadPizzaSuccess | LoadPizzaFail;
