@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from "@angular/router";
 
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs/Observable";
+import { tap } from "rxjs/operators";
+
 import * as fromStore from "../../store";
 
 import { Pizza } from "../../models/pizza.model";
@@ -22,7 +24,7 @@ import { Topping } from "../../models/topping.model";
         (update)="onUpdate($event)"
         (remove)="onRemove($event)">
         <pizza-display
-          [pizza]="visualise">
+          [pizza]="visualise$ | async">
         </pizza-display>
       </pizza-form>
     </div>
@@ -30,25 +32,43 @@ import { Topping } from "../../models/topping.model";
 })
 export class ProductItemComponent implements OnInit {
   pizza$: Observable<Pizza>;
-  visualise: Pizza;
+  visualise$: Observable<Pizza>;
   toppings$: Observable<Topping[]>;
 
   constructor(private store: Store<fromStore.ProductState>) {}
   ngOnInit() {
-    this.store.dispatch(new fromStore.LoadToppings());
+    this.pizza$ = this.store.select(fromStore.getSelectedPizza).pipe(
+      tap((pizza: Pizza) => {
+        // 'products/1'
+        const pizzaExist = !!(pizza && pizza.toppings);
+        const toppings = pizzaExist
+          ? pizza.toppings.map(topping => topping.id)
+          : [];
+        if (pizzaExist) {
+          this.store.dispatch(new fromStore.VisualiseTopping(toppings));
+        }
+      })
+    );
     this.toppings$ = this.store.select(fromStore.getAllToppings);
-    this.pizza$ = this.store.select(fromStore.getSelectedPizza);
+    this.visualise$ = this.store.select(fromStore.getPizzaVisualized);
   }
 
-  onSelect(event: number[]) {}
+  onSelect(event: number[]) {
+    this.store.dispatch(new fromStore.VisualiseTopping(event));
+  }
 
-  onCreate(event: Pizza) {}
+  onCreate(event: Pizza) {
+    this.store.dispatch(new fromStore.CreatePizza(event));
+  }
 
-  onUpdate(event: Pizza) {}
+  onUpdate(event: Pizza) {
+    this.store.dispatch(new fromStore.UpdatePizza(event));
+  }
 
   onRemove(event: Pizza) {
     const remove = window.confirm("Are you sure?");
     if (remove) {
+      this.store.dispatch(new fromStore.RemovePizza(event));
     }
   }
 }

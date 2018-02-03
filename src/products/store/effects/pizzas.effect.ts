@@ -27,4 +27,43 @@ export class PizzasEffects {
         );
     })
   );
+
+  @Effect()
+  createPizza$ = this.actions$.ofType(pizzasAction.CREATE_PIZZA).pipe(
+    map((action: pizzasAction.CreatePizza) => action.payload),
+    switchMap((pizza: Pizza) => {
+      return this.pizzaService
+        .createPizza(pizza)
+        .pipe(
+          map(pizza => new pizzasAction.CreatePizzaSuccess(pizza)),
+          catchError(error => of(new pizzasAction.CreatePizzaFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  updatePizza$ = this.actions$.ofType(pizzasAction.UPDATE_PIZZA).pipe(
+    map((action: pizzasAction.CreatePizza) => action.payload),
+    switchMap((pizza: Pizza) => {
+      return this.pizzaService
+        .updatePizza(pizza)
+        .pipe(
+          map(pizza => new pizzasAction.UpdatePizzaSuccess(pizza)),
+          catchError(error => of(new pizzasAction.UpdatePizzaFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  removePizza$ = this.actions$.ofType(pizzasAction.REMOVE_PIZZA).pipe(
+    map((action: pizzasAction.RemovePizza) => action.payload),
+    switchMap(pizza => {
+      return this.pizzaService
+        .removePizza(pizza)
+        .pipe(
+          map(() => new pizzasAction.RemovePizzaSuccess(pizza)),
+          catchError(error => of(new pizzasAction.RemovePizzaFail(error)))
+        );
+    })
+  );
 }
