@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Actions, Effect } from "@ngrx/effects";
+import { Actions, Effect, ofType } from "@ngrx/effects";
 
 import * as toppingActions from "../actions/toppings.action";
 
@@ -16,7 +16,8 @@ export class ToppingsEffects {
   ) {}
 
   @Effect()
-  loadTopping$ = this.actions$.ofType(toppingActions.LOAD_TOPPINGS).pipe(
+  loadTopping$ = this.actions$.pipe(
+    ofType(toppingActions.LOAD_TOPPINGS),
     switchMap(() => {
       return this.toppingsService
         .getToppings()

@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
-
+import { switchMap } from "rxjs/operators";
+import { Component } from "@angular/core";
+import { Notify } from "@ngrx/notify";
+import { takeUntil, take } from "rxjs/operators";
+import { timer } from "rxjs/observable/timer";
 @Component({
-  selector: 'app-root',
-  styleUrls: ['app.component.scss'],
+  selector: "app-root",
+  styleUrls: ["app.component.scss"],
   template: `
   <div class="app">
     <div class="app__header">
@@ -20,6 +23,19 @@ import { Component } from '@angular/core';
       </div>
     </div>
   </div>
-  `,
+  `
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private notify: Notify) {
+    notify
+      .requestPermission()
+      .pipe(
+        switchMap((permission: boolean) => {
+          return notify
+            .open("Hello world!")
+            .pipe(takeUntil(timer(5000)), take(1));
+        })
+      )
+      .subscribe();
+  }
+}

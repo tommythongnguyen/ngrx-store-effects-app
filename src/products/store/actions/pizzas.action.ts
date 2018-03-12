@@ -21,6 +21,7 @@ export class LoadPizzaFail implements Action {
 
 // create Pizza
 export const CREATE_PIZZA = "[Product] Create Pizza";
+export const UPDATE_PIZZA = "[Product] Update Pizza";
 export const CREATE_PIZZA_SUCCESS = "[Product] Create Pizza Success";
 export const CREATE_PIZZA_FAIL = "[Product] Create Pizza Fail";
 
@@ -38,7 +39,7 @@ export class CreatePizzaFail implements Action {
 }
 
 // update Pizza
-export const UPDATE_PIZZA = "[Product] Update Pizza";
+
 export const UPDATE_PIZZA_SUCCESS = "[Product] Update Pizza Success";
 export const UPDATE_PIZZA_FAIL = "[Product] Update Pizza Fail";
 

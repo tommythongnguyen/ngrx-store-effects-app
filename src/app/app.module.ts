@@ -15,6 +15,8 @@ import { reducers, effects, CustomSerializer } from "./store";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { storeFreeze } from "ngrx-store-freeze";
 
+import { NOTIFY_PROVIDERS, NOTIFY_GLOBAL_OPTIONS } from "@ngrx/notify";
+
 // this would be done dynamically with webpack for builds
 const environment = {
   development: true,
@@ -47,7 +49,17 @@ export const ROUTES: Routes = [
     StoreRouterConnectingModule,
     environment.development ? StoreDevtoolsModule.instrument() : []
   ],
-  providers: [{ provide: RouterStateSerializer, useClass: CustomSerializer }],
+  providers: [
+    { provide: RouterStateSerializer, useClass: CustomSerializer },
+    NOTIFY_PROVIDERS
+    // {
+    //   provide: NOTIFY_GLOBAL_OPTIONS,
+    //   multi: true,
+    //   useValue: {
+    //     /* global options here */
+    //   }
+    // }
+  ],
   declarations: [AppComponent],
   bootstrap: [AppComponent]
 })

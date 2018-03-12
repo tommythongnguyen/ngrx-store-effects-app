@@ -1,17 +1,25 @@
+import { createEntityAdapter, EntityAdapter, EntityState } from "@ngrx/entity";
+
 import * as fromToppings from "../actions/toppings.action";
 import { Topping } from "../../models/topping.model";
-export interface ToppingsState {
-  entities: { [id: number]: Topping };
+
+export const toppingsAdapter: EntityAdapter<Topping> = createEntityAdapter<
+  Topping
+>({
+  selectId: (topping: Topping) => topping.id,
+  sortComparer: false
+});
+
+export interface ToppingsState extends EntityState<Topping> {
   loaded: boolean;
   loading: boolean;
   selectedToppings: number[];
 }
-export const initialState: ToppingsState = {
-  entities: {},
+export const initialState = toppingsAdapter.getInitialState({
   loaded: false,
   loading: false,
   selectedToppings: []
-};
+});
 
 export function reducer(
   state = initialState,
@@ -20,7 +28,6 @@ export function reducer(
   switch (action.type) {
     case fromToppings.VISUALISE_TOPPINGS: {
       const selectedToppings = action.payload;
-
       return {
         ...state,
         selectedToppings
@@ -30,25 +37,11 @@ export function reducer(
       return { ...state, loading: true };
     }
     case fromToppings.LOAD_TOPPINGS_SUCCESS: {
-      const topping = action.payload;
-
-      const entities = topping.reduce(
-        (entities: { [id: number]: Topping }, topping: Topping) => {
-          return {
-            ...entities,
-            [topping.id]: topping
-          };
-        },
-        {
-          ...state.entities
-        }
-      );
-      return {
+      return toppingsAdapter.addAll(action.payload, {
         ...state,
         loading: false,
-        loaded: true,
-        entities
-      };
+        loaded: true
+      });
     }
     case fromToppings.LOAD_TOPPINGS_FAIL: {
       return { ...state, loaded: false, loading: false };

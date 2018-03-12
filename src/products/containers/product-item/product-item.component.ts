@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 
-import { Store } from "@ngrx/store";
+import { Store, select } from "@ngrx/store";
 import { Observable } from "rxjs/Observable";
 import { tap } from "rxjs/operators";
 
@@ -38,7 +38,8 @@ export class ProductItemComponent implements OnInit {
 
   constructor(private store: Store<fromStore.ProductState>) {}
   ngOnInit() {
-    this.pizza$ = this.store.select(fromStore.getSelectedPizza).pipe(
+    this.pizza$ = this.store.pipe(
+      select(fromStore.getSelectedPizza),
       tap((pizza: Pizza) => {
         // 'products/1'
         const pizzaExist = !!(pizza && pizza.toppings);
@@ -50,8 +51,8 @@ export class ProductItemComponent implements OnInit {
         }
       })
     );
-    this.toppings$ = this.store.select(fromStore.getAllToppings);
-    this.visualise$ = this.store.select(fromStore.getPizzaVisualized);
+    this.toppings$ = this.store.pipe(select(fromStore.getAllToppings));
+    this.visualise$ = this.store.pipe(select(fromStore.getPizzaVisualized));
   }
 
   onSelect(event: number[]) {

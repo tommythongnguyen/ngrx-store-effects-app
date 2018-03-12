@@ -30,7 +30,7 @@ export const ROUTES: Routes = [
   },
   {
     path: "new",
-    canActivate: [fromGuards.ToppingsGuard],
+    canActivate: [fromGuards.ToppingsGuard, fromGuards.VisualizeToppingsGuard],
     component: fromContainers.ProductItemComponent
   },
   {

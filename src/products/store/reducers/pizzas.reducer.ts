@@ -1,64 +1,59 @@
-import { CREATE_PIZZA_SUCCESS } from "./../actions/pizzas.action";
+import { createEntityAdapter, EntityState, EntityAdapter } from "@ngrx/entity";
 import { Pizza } from "../../models/pizza.model";
 import * as fromPizzas from "../actions/pizzas.action";
-export interface PizzasState {
-  entities: { [id: number]: Pizza };
+
+export const pizzaAdapter: EntityAdapter<Pizza> = createEntityAdapter<Pizza>({
+  selectId: (pizza: Pizza) => pizza.id,
+  sortComparer: false
+});
+
+export interface PizzasState extends EntityState<Pizza> {
   loaded: boolean;
   loading: boolean;
 }
 
-export const initialState: PizzasState = {
-  entities: {},
+export const initialState = pizzaAdapter.getInitialState({
   loaded: false,
   loading: false
-};
+});
 
 export function reducer(state = initialState, action: fromPizzas.pizzasAction) {
   switch (action.type) {
-    case fromPizzas.LOAD_PIZZAS:
+    case fromPizzas.LOAD_PIZZAS: {
       return { ...state, loading: true };
+    }
 
-    case fromPizzas.LOAD_PIZZAS_SUCCESS:
-      const pizzas = action.payload;
-
-      const entities = pizzas.reduce(
-        (entities: { [id: number]: Pizza }, pizza: Pizza) => {
-          return {
-            ...entities,
-            [pizza.id]: pizza
-          };
-        },
-        {
-          ...state.entities
-        }
-      );
-      return {
+    case fromPizzas.LOAD_PIZZAS_SUCCESS: {
+      return pizzaAdapter.addAll(action.payload, {
         ...state,
-        loading: false,
         loaded: true,
-        entities
-      };
+        loading: false
+      });
+    }
 
     case fromPizzas.LOAD_PIZZAS_FAIL: {
       return { ...state, loading: false, loaded: false };
     }
 
+    case fromPizzas.CREATE_PIZZA:
+    case fromPizzas.UPDATE_PIZZA: {
+      return { ...state, loading: true };
+    }
+
     case fromPizzas.UPDATE_PIZZA_SUCCESS:
     case fromPizzas.CREATE_PIZZA_SUCCESS: {
       const pizza = action.payload;
-      const entities = { ...state.entities, [pizza.id]: pizza };
-      return {
-        ...state,
-        entities
-      };
+      return pizzaAdapter.upsertOne({ id: pizza.id, changes: pizza }, state);
+    }
+
+    case fromPizzas.CREATE_PIZZA_FAIL:
+    case fromPizzas.UPDATE_PIZZA_FAIL: {
+      return { ...state, loading: false };
     }
 
     case fromPizzas.REMOVE_PIZZA_SUCCESS: {
-      const pizza = action.payload;
-      const { [pizza.id]: removedPizza, ...entities } = state.entities;
-      return { ...state, entities };
+      return pizzaAdapter.removeOne(action.payload.id, state);
     }
-
     default:
       return state;
   }

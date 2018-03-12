@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
 
 import { Pizza } from "../../models/pizza.model";
 
-import { Store } from "@ngrx/store";
+import { Store, select } from "@ngrx/store";
 import * as fromStore from "../../store";
 
 @Component({
@@ -37,6 +37,6 @@ export class ProductsComponent implements OnInit {
   constructor(private store: Store<fromStore.ProductState>) {}
 
   ngOnInit() {
-    this.pizzas$ = this.store.select(fromStore.getAllPizzas);
+    this.pizzas$ = this.store.pipe(select(fromStore.getAllPizzas));
   }
 }

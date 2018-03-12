@@ -2,8 +2,7 @@ import { switchMap, map, catchError } from "rxjs/operators";
 import * as pizzasAction from "./../actions/pizzas.action";
 import { of } from "rxjs/Observable/of";
 import { Injectable } from "@angular/core";
-
-import { Effect, Actions } from "@ngrx/effects";
+import { Effect, Actions, ofType } from "@ngrx/effects";
 
 import * as fromServices from "../../services";
 
@@ -19,7 +18,8 @@ export class PizzasEffects {
   ) {}
 
   @Effect()
-  loadPizzas$ = this.actions$.ofType(pizzasAction.LOAD_PIZZAS).pipe(
+  loadPizzas$ = this.actions$.pipe(
+    ofType(pizzasAction.LOAD_PIZZAS),
     switchMap(() => {
       return this.pizzaService
         .getPizzas()
@@ -31,7 +31,8 @@ export class PizzasEffects {
   );
 
   @Effect()
-  createPizza$ = this.actions$.ofType(pizzasAction.CREATE_PIZZA).pipe(
+  createPizza$ = this.actions$.pipe(
+    ofType(pizzasAction.CREATE_PIZZA),
     map((action: pizzasAction.CreatePizza) => action.payload),
     switchMap((pizza: Pizza) => {
       return this.pizzaService
@@ -44,21 +45,21 @@ export class PizzasEffects {
   );
 
   @Effect()
-  createPizzaSuccess$ = this.actions$
-    .ofType(pizzasAction.CREATE_PIZZA_SUCCESS)
-    .pipe(
-      map((action: pizzasAction.CreatePizzaSuccess) => action.payload),
-      map(
-        pizza =>
-          new fromRoot.Go({
-            path: ["/products", pizza.id]
-          })
-      )
-    );
+  createPizzaSuccess$ = this.actions$.pipe(
+    ofType(pizzasAction.CREATE_PIZZA_SUCCESS),
+    map((action: pizzasAction.CreatePizzaSuccess) => action.payload),
+    map(
+      pizza =>
+        new fromRoot.Go({
+          path: ["/products", pizza.id]
+        })
+    )
+  );
 
   @Effect()
-  updatePizza$ = this.actions$.ofType(pizzasAction.UPDATE_PIZZA).pipe(
-    map((action: pizzasAction.CreatePizza) => action.payload),
+  updatePizza$ = this.actions$.pipe(
+    ofType(pizzasAction.UPDATE_PIZZA),
+    map((action: pizzasAction.UpdatePizza) => action.payload),
     switchMap((pizza: Pizza) => {
       return this.pizzaService
         .updatePizza(pizza)
@@ -70,7 +71,8 @@ export class PizzasEffects {
   );
 
   @Effect()
-  removePizza$ = this.actions$.ofType(pizzasAction.REMOVE_PIZZA).pipe(
+  removePizza$ = this.actions$.pipe(
+    ofType(pizzasAction.REMOVE_PIZZA),
     map((action: pizzasAction.RemovePizza) => action.payload),
     switchMap(pizza => {
       return this.pizzaService

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 
-import { Observable } from 'rxjs/Observable';
-import { catchError } from 'rxjs/operators';
-import 'rxjs/add/observable/throw';
+import { Observable } from "rxjs/Observable";
+import { catchError } from "rxjs/operators";
+import "rxjs/add/observable/throw";
 
-import { Pizza } from '../models/pizza.model';
+import { Pizza } from "../models/pizza.model";
 
 @Injectable()
 export class PizzasService {

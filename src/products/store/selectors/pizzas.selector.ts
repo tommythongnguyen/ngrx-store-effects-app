@@ -1,4 +1,4 @@
-import { createSelector } from "@ngrx/store/src/selector";
+import { createSelector } from "@ngrx/store";
 
 import * as fromRoot from "../../../app/store";
 import * as fromFeature from "../reducers";
@@ -11,10 +11,16 @@ export const getPizzasState = createSelector(
   (state: fromFeature.ProductState) => state.pizzas
 );
 
-export const getPizzasEntities = createSelector(
-  getPizzasState,
-  fromPizzas.getPizzasEntities
-);
+/**
+ * Adapters created with @ngrx/entity generate commonly used selector function including gettting all
+ * ids in the record set
+ */
+export const {
+  selectIds: getPizzaIds,
+  selectEntities: getPizzasEntities,
+  selectAll: getAllPizzas,
+  selectTotal: getTotalPizzas
+} = fromPizzas.pizzaAdapter.getSelectors(getPizzasState);
 
 export const getSelectedPizza = createSelector(
   getPizzasEntities,
@@ -33,10 +39,6 @@ export const getPizzaVisualized = createSelector(
     return { ...pizza, toppings };
   }
 );
-
-export const getAllPizzas = createSelector(getPizzasEntities, entities => {
-  return Object.keys(entities).map(id => entities[parseInt(id, 10)]);
-});
 
 export const getPizzasLoaded = createSelector(
   getPizzasState,
